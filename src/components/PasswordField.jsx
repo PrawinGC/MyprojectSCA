@@ -22,7 +22,6 @@ function PasswordField({ value, onChange }) {
       />
       <button
         type="button"
-        className="absolute right-3 text-white cursor-pointer border-[none] top-[38px]"
         onClick={togglePasswordVisibility}
       >
         {showPassword ? "Hide" : "Show"}

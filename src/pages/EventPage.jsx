@@ -15,7 +15,6 @@ function EventPage() {
   const [userCreatedItems, setUserCreatedItems] = useState([]);
 
   useEffect(() => {
-  
     setEvents([
       {
         id: 1,
