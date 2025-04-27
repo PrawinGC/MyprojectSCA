@@ -1,11 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import ScheduleButton from "../components/ScheduleButton";
 import EventList from "../components/EventList";
-import EventFormModal from "../components/EventFormModal"; 
+import EventFormModal from "../components/EventFormModal";
+import ChatPortal from "../components/ChatPortal";
 
 function EventPage() {
+  const { eventId } = useParams(); // Get the dynamic eventId from the URL
   const [searchQuery, setSearchQuery] = useState("");
   const [showScheduleForm, setShowScheduleForm] = useState(false);
   const [events, setEvents] = useState([]);
@@ -14,7 +17,9 @@ function EventPage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [userCreatedItems, setUserCreatedItems] = useState([]);
 
+  // Fetch events or a specific event if eventId is provided
   useEffect(() => {
+<<<<<<< HEAD
     setEvents([
       {
         id: 1,
@@ -56,63 +61,84 @@ function EventPage() {
     if (event.attendeeCount >= event.maxMembers) {
       alert("This event has reached its maximum capacity");
       return;
+=======
+    async function fetchEvents() {
+      try {
+        if (eventId) {
+          // Fetch a specific event
+          const response = await fetch(`/api/events/${eventId}`);
+          const data = await response.json();
+          setEvents([data]); // Set the single event in the events array
+        } else {
+          // Fetch all events
+          const response = await fetch("/api/events");
+          const data = await response.json();
+          setEvents(data);
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+>>>>>>> 4663541 (Second commit)
     }
-    const updatedEvent = {
-      ...event,
-      attendeeCount: (event.attendeeCount || 0) + 1,
-    };
-    setEvents(events.map((e) => (e.id === event.id ? updatedEvent : e)));
-    setSelectedItem(updatedEvent);
-    setShowChatPortal(true);
-  };
 
-  const handleDeleteEvent = (eventToDelete) => {
-    setEvents(events.filter((e) => e.id !== eventToDelete.id));
-    setUserCreatedItems(
-      userCreatedItems.filter(
-        (item) => item.name !== eventToDelete.name || item.type !== "Event"
-      )
-    );
-  };
+    fetchEvents();
+  }, [eventId]);
 
-  const handleCreateEvent = (newEvent) => {
-    const eventWithId = { ...newEvent, id: Date.now(), attendeeCount: 0 };
-    setEvents((prev) => [...prev, eventWithId]);
-    if (currentUser) {
-      setUserCreatedItems((prev) => [...prev, { ...eventWithId, type: "Event" }]);
-    }
+  // Handle creating a new event
+  const handleAddNewEvent = (newEvent) => {
+    setEvents((prevEvents) => [...prevEvents, newEvent]);
     setShowScheduleForm(false);
   };
 
+  // Handle joining an event
+  const handleJoinEvent = (event) => {
+    console.log(`User joined event: ${event.name}`);
+  };
+
+  // Handle opening the chat portal
+  const handleOpenChat = (event) => {
+    setSelectedItem(event);
+    setShowChatPortal(true);
+  };
+
   return (
-    <div className="mx-auto my-0 max-w-[1200px]">
-      <div className="flex justify-between items-center mb-8 max-sm:flex-col max-sm:gap-4">
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        <ScheduleButton onClick={handleScheduleNewEvent} />
-      </div>
+    <div className="event-page">
+      <h1>Events</h1>
 
-      <h2 className="mb-8 text-3xl font-bold">Upcoming Events</h2>
-
-      <EventList
-        events={filterItems(events)}
-        currentUser={currentUser}
-        onJoinEvent={handleJoinEvent}
-        onDeleteEvent={handleDeleteEvent}
+      {/* Search Bar */}
+      <SearchBar
+        value={searchQuery}
+        onChange={(query) => setSearchQuery(query)}
+        placeholder="Search events..."
       />
-      {showChatPortal && selectedItem && (
-    <ChatPortal
-      item={selectedItem}
-      onClose={() => setShowChatPortal(false)}
-      currentUser={currentUser}
-    />
-  )}
 
+      {/* Schedule Button */}
+      <ScheduleButton onClick={() => setShowScheduleForm(true)} />
 
-      {/* ✅ Show Event Form Modal */}
+      {/* Event List */}
+      <EventList
+        events={events.filter((event) =>
+          event.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )}
+        currentUser={currentUser}
+        onJoin={handleJoinEvent}
+        onChat={handleOpenChat}
+      />
+
+      {/* Event Form Modal */}
       {showScheduleForm && (
         <EventFormModal
           onClose={() => setShowScheduleForm(false)}
-          onCreate={handleCreateEvent}
+          onCreate={handleAddNewEvent}
+        />
+      )}
+
+      {/* Chat Portal */}
+      {showChatPortal && selectedItem && (
+        <ChatPortal
+          item={selectedItem}
+          onClose={() => setShowChatPortal(false)}
+          currentUser={currentUser}
         />
       )}
     </div>

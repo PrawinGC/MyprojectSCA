@@ -41,11 +41,11 @@ const ChatPortal = ({ item, onClose, currentUser }) => {
         </div>
 
         <div className="flex items-center gap-2 mt-3">
-          <button onClick={() => setShowEmojis(!showEmojis)} className="text-xl">
+          <button onClick={() => setShowEmojis(!showEmojis)} className="text-xl text-white ">
             <FaSmile />
           </button>
           <input
-            className="flex-grow px-3 py-1 border rounded"
+            className="flex-grow px-3 py-1 border color- black border rounded"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}

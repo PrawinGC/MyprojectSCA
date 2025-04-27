@@ -11,18 +11,44 @@ function AuthForm() {
     password: "",
     name: "",
   });
+  const [message, setMessage] = useState("");
 
   const handleInputChange = (field, value) => {
     setFormData((prevData) => ({ ...prevData, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
+
+    const endpoint = isSignupView
+    ? "http://localhost:5000/signup"
+    : "http://localhost:5000/login"; 
+  
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      setMessage(data.message);
+
+      if (response.ok && !isSignupView) {
+        // Perform post-login actions (e.g., redirect)
+        console.log("Login successful!");
+      }
+    } catch (error) {
+      setMessage("An error occurred. Please try again.");
+    }
   };
 
   const toggleView = () => {
     setIsSignupView((prev) => !prev);
+    setMessage(""); // Clear message when toggling view
   };
 
   return (
@@ -64,6 +90,7 @@ function AuthForm() {
           </a>
         </div>
       </form>
+      <p className="mt-4 text-center text-red-500">{message}</p>
       <ToggleViewLink isSignupView={isSignupView} onToggle={toggleView} />
     </div>
   );

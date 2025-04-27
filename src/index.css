@@ -32,6 +32,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+<<<<<<< HEAD
+=======
+    background-color: #f2ecec; 
+>>>>>>> 4663541 (Second commit)
   }
 }
 /* Resolved version */

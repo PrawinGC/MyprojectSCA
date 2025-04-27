@@ -34,7 +34,7 @@ export const ClubFormModal = ({ onClose, onCreate }) => {
         <input type="text" name="name" placeholder="Name" className="w-full border p-2 rounded" onChange={handleChange} />
         <textarea name="description" placeholder="Description" className="w-full border p-2 rounded" onChange={handleChange} />
         <input type="datetime-local" name="date" className="w-full border p-2 rounded" onChange={handleChange} />
-        <div className="space-y-1">
+        <div className="space-y-1  border p-2 rounded border  color-black ">
           <label>Thumbnail Image</label>
           <input type="file" accept="image/*" onChange={handleImage} />
         </div>
